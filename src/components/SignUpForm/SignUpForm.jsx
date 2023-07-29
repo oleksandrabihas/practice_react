@@ -1,4 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useState } from 'react';
 import * as yup from 'yup';
 
 const schema = yup.object({
@@ -6,16 +7,8 @@ const schema = yup.object({
   email: yup.string().required().email(),
   password: yup.string().min(6).max(16).required(),
   gender: yup.string().required(),
+  age: yup.string().required(),
 });
-
-const INITIAL_STATE = {
-  login: '',
-  email: '',
-  password: '',
-  agreed: false,
-  gender: null,
-  age: '',
-};
 
 const Gender = {
   MALE: 'male',
@@ -23,10 +16,19 @@ const Gender = {
 };
 
 export const SignUpForm = () => {
-  const handleSubmit = (values, { resetForm }) => {
-    //   const { login, email, password, agreed } = values;
+  const INITIAL_STATE = {
+    login: '',
+    email: '',
+    password: '',
+    agreed: false,
+    gender: null,
+    age: '',
+  };
+  const [initialState, setInitialState] = useState(INITIAL_STATE);
 
-    resetForm();
+  const handleSubmit = (values, formikBag) => {
+    setInitialState(values);
+    formikBag.resetForm();
   };
 
   return (
@@ -35,7 +37,7 @@ export const SignUpForm = () => {
       onSubmit={handleSubmit}
       validationSchema={schema}
     >
-      {({ values: { agreed, gender, login }, setFieldValue }) => (
+      {({ values: { agreed, gender, login, age }, setFieldValue }) => (
         <Form>
           <label>
             Name
@@ -84,18 +86,18 @@ export const SignUpForm = () => {
             />
           </label>
           <ErrorMessage name="gender" component="div" />
-
-          {/*<label>
-          Choose your age
-          <select name="age" value={age}>
-            <option value="" disabled>
-              ...
-            </option>
-            <option value="18-25">18-25</option>
-            <option value="26-35">26-35</option>
-            <option value="36+">36+</option>
-          </select>
-        </label>  */}
+          <label>
+            Choose your age
+            <Field as="select" name="age" value={age}>
+              <option value="" disabled>
+                ...
+              </option>
+              <option value="18-25">18-25</option>
+              <option value="26-35">26-35</option>
+              <option value="36+">36+</option>
+            </Field>
+            <ErrorMessage name="age" component="div" />
+          </label>
           <button type="submit" disabled={!agreed}>
             Sign up as {login}
           </button>
